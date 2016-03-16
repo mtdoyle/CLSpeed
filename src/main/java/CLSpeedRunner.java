@@ -1,6 +1,4 @@
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +24,7 @@ public class CLSpeedRunner {
 
     public static void main(String[] args) throws IOException, TimeoutException {
         int messageCount;
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(1);
         List<CLSpeed> addressList = new ArrayList<CLSpeed>();
 
         Connection conn = getConnectionFactory();
@@ -37,10 +35,18 @@ public class CLSpeedRunner {
 
         messageCount = channel.queueDeclare("clspeed", true, false, false, null).getMessageCount();
 
-        addressList.add(new CLSpeed("123 Main St, Minneapolis, MN 55442"));
-
         for (int i = 0; i < messageCount; i++){
-            executor.submit(addressList.get(i));
+            GetResponse response = channel.basicGet("clspeed", false);
+            if (response == null){
+                //no message received
+            } else {
+                AMQP.BasicProperties props = response.getProps();
+                byte[] body = response.getBody();
+                long deliveryTag = response.getEnvelope().getDeliveryTag();
+                executor.submit(new CLSpeed(new String(body, "UTF-8")));
+                channel.basicAck(deliveryTag, false);
+            }
+
         }
 
     }
