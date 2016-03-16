@@ -25,10 +25,9 @@
             <version>2.52.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.detro.ghostdriver</groupId>
-            <artifactId>phantomjsdriver</artifactId>
-            <version>1.1.0</version>
-            <scope>test</scope>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 
