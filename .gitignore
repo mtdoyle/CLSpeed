@@ -1,0 +1,12 @@
+.idea
+*.iml
+*.jar
+*.war
+target/
+git.properties
+MC-Client.txt.*
+MC-Prod.txt.*
+document.*.log
+appserver.logs.*
+logs/
+
