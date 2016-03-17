@@ -114,7 +114,7 @@ public class CLSpeed implements Runnable {
             displayBadAddress();
             return;
         }
-        this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("\\D", "");
+        this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("M", "");
         System.out.println(maxSpeed + ": " + submitAddress);
         webdriver.quit();
         writeToDB();

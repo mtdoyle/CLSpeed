@@ -30,9 +30,9 @@ public class WriteToMySQL {
         street = actualAddressSplit[0];
         city = actualAddressSplit[1];
         zip = actualAddressSplit[2].split(" ")[1];
-        lat = addressSplit[3];
-        lon = addressSplit[4];
-        garbage = addressSplit[5];
+        lat = addressSplit[4];
+        lon = addressSplit[5];
+        garbage = addressSplit[6];
 
         String sql = String.format("insert into clspeed " +
                 "(street, city, state, zip, speed, emm_lat, emm_lng, emm_acc)" +
