@@ -64,11 +64,12 @@ public class CLSpeed implements Runnable {
         webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(submitAddress);
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0;
-        while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1 && elapsedTime < 4){
-            elapsedTime = System.currentTimeMillis() - startTime;
-            System.out.println(elapsedTime);
+        while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1 && elapsedTime < 1){
+            elapsedTime = (System.currentTimeMillis() - startTime)/1000;
         }
-        webdriver.findElement(By.xpath("/html/body/ul/li[1]/a")).click();
+        if (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() > 0){
+            webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).click();
+        }
         if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
             if (webdriver.findElement(By.id("ctam_nc-go")).isDisplayed()){
                 webdriver.findElement(By.id("ctam_nc-go")).click();
@@ -80,14 +81,22 @@ public class CLSpeed implements Runnable {
         }
         if (webdriver.getPageSource().contains("CenturyLink has fiber-connected Internet with speeds up to 1 Gig in your area")){
             webdriver.quit();
+            displayBadAddress();
             return;
         }
         if (webdriver.getPageSource().contains("CenturyLink High-Speed Internet is not available in your area at this time, but we do have Internet options for you")){
             webdriver.quit();
+            displayBadAddress();
             return;
         }
         if (webdriver.getCurrentUrl().contains("sorry.centurylink.com")){
             webdriver.quit();
+            displayBadAddress();
+            return;
+        }
+        if (webdriver.findElements(By.id("no-match-trillium-form")).size() > 0){
+            webdriver.quit();
+            displayBadAddress();
             return;
         }
         this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("\\D", "");
@@ -99,4 +108,9 @@ public class CLSpeed implements Runnable {
     private void writeToDB(){
         WriteToMySQL db = new WriteToMySQL(address, maxSpeed);
     }
+
+    private void displayBadAddress(){
+        System.out.println("Bad address: " + address);
+    }
 }
+
