@@ -89,6 +89,11 @@ public class CLSpeed implements Runnable {
             actualAddress = webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).getAttribute("innerHTML").replace("<b>","").replace("</b>","");
             webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).click();
         }
+        if (webdriver.getPageSource().contains("Sorry")){
+            webdriver.quit();
+            displayBadAddress();
+            return;
+        }
         startTime = System.currentTimeMillis();
         elapsedTime = 0;
         while (webdriver.findElements(By.id("ctam_nc-go")).size() < 1 && elapsedTime < 5){
