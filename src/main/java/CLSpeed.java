@@ -2,9 +2,7 @@ import com.rabbitmq.client.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -113,7 +111,7 @@ public class CLSpeed implements Runnable {
             displayBadAddress();
             return;
         }
-        if (webdriver.getCurrentUrl().contains("sorry.centurylink.com")){
+        if (webdriver.getPageSource().contains("Sorry!")){
             webdriver.quit();
             displayBadAddress();
             return;
