@@ -21,13 +21,10 @@ public class CLSpeed implements Runnable {
 
     public CLSpeed(Connection conn) throws IOException {
         this.conn = conn;
-        setUpConnection();
     }
 
     public CLSpeed() throws IOException, TimeoutException {
         this.conn = getConnectionFactory();
-
-        setUpConnection();
     }
 
     private void setUpConnection() throws IOException {
@@ -48,11 +45,21 @@ public class CLSpeed implements Runnable {
         }
     }
 
-    public void run(){
+    public void run() {
+        try {
+            setUpConnection();
+        } catch (IOException e) {
+            System.out.println("ERROR ERROR");
+            e.printStackTrace();
+        }
         checkAddress();
         try {
             channel.basicAck(deliveryTag, false);
+            channel.close();
         } catch (IOException e) {
+            System.out.println("ERROR ERROR ERROR");
+            e.printStackTrace();
+        } catch (TimeoutException e) {
             e.printStackTrace();
         }
     }
@@ -70,8 +77,9 @@ public class CLSpeed implements Runnable {
     public void checkAddress () {
         String[] choppedAddress = address.split(",");
         String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
-        FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
-        WebDriver webdriver = new FirefoxDriver(profile);
+        //FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
+        //WebDriver webdriver = new FirefoxDriver(profile);
+        WebDriver webdriver = new FirefoxDriver();
         webdriver.get("http://www.centurylink.com/home/internet");
         webdriver.findElement(By.id("home-internet-speed-check")).click();
         webdriver.findElement(By.id("ctam_new-customer-link")).click();
@@ -85,10 +93,13 @@ public class CLSpeed implements Runnable {
             actualAddress = webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).getAttribute("innerHTML").replace("<b>","").replace("</b>","");
             webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).click();
         }
-        if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
-            if (webdriver.findElement(By.id("ctam_nc-go")).isDisplayed()){
+        startTime = System.currentTimeMillis();
+        elapsedTime = 0;
+        while (webdriver.findElements(By.id("ctam_nc-go")).size() < 1 && elapsedTime < 5){
+            elapsedTime = (System.currentTimeMillis() - startTime)/1000;
+        }
+        if (webdriver.findElement(By.id("ctam_nc-go")).isDisplayed()){
                 webdriver.findElement(By.id("ctam_nc-go")).click();
-            }
         }
         if (webdriver.findElements(By.id("addressid2")).size() > 0){
             webdriver.findElements(By.id("addressid2")).get(0).click();
@@ -117,16 +128,36 @@ public class CLSpeed implements Runnable {
         this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("M", "");
         System.out.println(maxSpeed + ": " + submitAddress);
         webdriver.quit();
-        writeToDB();
+        writeToDB(maxSpeed);
 
     }
-    private void writeToDB(){
-        new WriteToMySQL(address, actualAddress, maxSpeed);
+    private void writeToDB(String speed){
+        String[] addressSplit = address.split(",");
+        String[] actualAddressSplit = actualAddress.split(",");
+        String street = actualAddressSplit[0];
+        String city = actualAddressSplit[1];
+        String zip = actualAddressSplit[2].split(" ")[1];
+        String lat = addressSplit[3];
+        String lon = addressSplit[4];
+        String garbage = addressSplit[5];
+        String state = "MN";
+
+        String sql = String.format("insert into clspeed " +
+                        "(street, city, state, zip, speed, emm_lat, emm_lng, emm_acc)" +
+                        "values ('%s', '%s', '%s', '%s', %s, %s, %s, '%s')",
+                street, city, state, zip, speed, lat, lon, garbage);
+        WriteToMySQL writeToMySQL = new WriteToMySQL();
+        writeToMySQL.executeStatement(sql);
     }
 
     private void displayBadAddress(){
         System.out.println("Bad address: " + address);
-        new WriteToMySQL(address);
+        String sql = String.format("insert into badaddresses " +
+                        "(badaddress)" +
+                        "values ('%s')",
+                address);
+        WriteToMySQL writeToMySQL = new WriteToMySQL();
+        writeToMySQL.executeStatement(sql);
     }
 }
 

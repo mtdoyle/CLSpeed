@@ -15,6 +15,10 @@ public class WriteToMySQL {
     String garbage;
     String state = "MN";
 
+    public WriteToMySQL(){
+
+    }
+
     //this constructor assumes the address is bad since no speed was sent to it
     public WriteToMySQL(String address){
         String sql = String.format("insert into badaddresses " +
@@ -42,7 +46,7 @@ public class WriteToMySQL {
         executeStatement(sql);
     }
 
-    private void executeStatement(String sql){
+    protected void executeStatement(String sql){
         try {
             conn =
                 DriverManager.getConnection("jdbc:mysql://192.168.1.211/clspeed?" +
