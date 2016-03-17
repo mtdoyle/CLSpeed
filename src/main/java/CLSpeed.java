@@ -1,29 +1,93 @@
+import com.rabbitmq.client.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
  */
 public class CLSpeed implements Runnable {
     String maxSpeed;
-    private final String address;
+    String address;
+    Channel channel;
+    long deliveryTag;
 
-    public CLSpeed(String address){
-        this.address = address;
+    public CLSpeed() throws IOException, TimeoutException {
+        Connection conn = getConnectionFactory();
+
+        channel = conn.createChannel();
+
+        channel.basicQos(1);
+
+        channel.queueDeclare("clspeed", true, false, false, null);
+
+        GetResponse response = channel.basicGet("clspeed", false);
+        if (response == null) {
+            //no message received
+        } else {
+            AMQP.BasicProperties props = response.getProps();
+            byte[] body = response.getBody();
+            this.deliveryTag = response.getEnvelope().getDeliveryTag();
+            this.address = new String(body, "UTF-8");
+        }
     }
 
-    public void run () {
+    public void run(){
+        checkAddress();
+        try {
+            channel.basicAck(deliveryTag, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Connection getConnectionFactory() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setUsername("guest");
+        factory.setPassword("guest");
+        factory.setVirtualHost("/");
+        factory.setHost("localhost");
+        factory.setPort(5672);
+        return factory.newConnection();
+    }
+
+    public void checkAddress () {
+        String[] choppedAddress = address.split(",");
+        String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
         WebDriver webdriver = new FirefoxDriver();
         webdriver.get("http://www.centurylink.com/home/internet");
         webdriver.findElement(By.id("home-internet-speed-check")).click();
         webdriver.findElement(By.id("ctam_new-customer-link")).click();
-        webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(address);
+        webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(submitAddress);
         while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1){
         }
         webdriver.findElement(By.xpath("/html/body/ul/li[1]/a")).click();
+        if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
+            if (webdriver.findElement(By.id("ctam_nc-go")).isDisplayed()){
+                webdriver.findElement(By.id("ctam_nc-go")).click();
+            }
+        }
+        if (webdriver.findElements(By.id("addressid2")).size() > 0){
+            webdriver.findElements(By.id("addressid2")).get(0).click();
+            webdriver.findElement(By.id("submitSecUnit")).click();
+        }
+        if (webdriver.getPageSource().contains("CenturyLink has fiber-connected Internet with speeds up to 1 Gig in your area")){
+            webdriver.quit();
+            return;
+        }
+        if (webdriver.getPageSource().contains("CenturyLink High-Speed Internet is not available in your area at this time, but we do have Internet options for you")){
+            webdriver.quit();
+            return;
+        }
+        if (webdriver.getCurrentUrl().contains("sorry.centurylink.com")){
+            webdriver.quit();
+            return;
+        }
         maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("\\D", "");
-        webdriver.close();
-        System.out.println(maxSpeed);
+        System.out.println(maxSpeed + ": " + submitAddress);
+        webdriver.quit();
     }
 }
