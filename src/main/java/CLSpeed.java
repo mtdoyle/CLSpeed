@@ -62,7 +62,10 @@ public class CLSpeed implements Runnable {
         webdriver.findElement(By.id("home-internet-speed-check")).click();
         webdriver.findElement(By.id("ctam_new-customer-link")).click();
         webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(submitAddress);
-        while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1){
+        long startTime = System.currentTimeMillis();
+        long elapsedTime = 0;
+        while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1 && elapsedTime < 4){
+        elapsedTime = System.currentTimeMillis() - startTime;
         }
         webdriver.findElement(By.xpath("/html/body/ul/li[1]/a")).click();
         if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
