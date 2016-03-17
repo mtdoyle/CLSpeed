@@ -65,7 +65,8 @@ public class CLSpeed implements Runnable {
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0;
         while (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() < 1 && elapsedTime < 4){
-        elapsedTime = System.currentTimeMillis() - startTime;
+            elapsedTime = System.currentTimeMillis() - startTime;
+            System.out.println(elapsedTime);
         }
         webdriver.findElement(By.xpath("/html/body/ul/li[1]/a")).click();
         if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
