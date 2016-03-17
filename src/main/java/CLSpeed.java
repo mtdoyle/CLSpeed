@@ -2,7 +2,9 @@ import com.rabbitmq.client.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -57,7 +59,8 @@ public class CLSpeed implements Runnable {
     public void checkAddress () {
         String[] choppedAddress = address.split(",");
         String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
-        WebDriver webdriver = new FirefoxDriver();
+        FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
+        WebDriver webdriver = new FirefoxDriver(profile);
         webdriver.get("http://www.centurylink.com/home/internet");
         webdriver.findElement(By.id("home-internet-speed-check")).click();
         webdriver.findElement(By.id("ctam_new-customer-link")).click();
