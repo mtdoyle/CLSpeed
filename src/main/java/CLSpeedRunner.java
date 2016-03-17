@@ -21,7 +21,7 @@ public class CLSpeedRunner {
     public static void main(String[] args) throws IOException, TimeoutException, ExecutionException, InterruptedException {
         int messageCount;
 
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newFixedThreadPool(15);
 
         Connection conn = getConnectionFactory();
 
