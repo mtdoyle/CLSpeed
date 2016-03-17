@@ -106,11 +106,12 @@ public class CLSpeed implements Runnable {
 
     }
     private void writeToDB(){
-        WriteToMySQL db = new WriteToMySQL(address, maxSpeed);
+        new WriteToMySQL(address, maxSpeed);
     }
 
     private void displayBadAddress(){
         System.out.println("Bad address: " + address);
+        new WriteToMySQL(address);
     }
 }
 
