@@ -77,8 +77,6 @@ public class CLSpeed implements Runnable {
     public void checkAddress () {
         String[] choppedAddress = address.split(",");
         String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
-        //FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
-        //WebDriver webdriver = new FirefoxDriver(profile);
         WebDriver webdriver = new FirefoxDriver();
         webdriver.get("http://www.centurylink.com/home/internet");
         webdriver.findElement(By.id("home-internet-speed-check")).click();
