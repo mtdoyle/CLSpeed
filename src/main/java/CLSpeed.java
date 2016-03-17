@@ -111,20 +111,23 @@ public class CLSpeed implements Runnable {
             displayBadAddress();
             return;
         }
-        if (webdriver.getPageSource().contains("Sorry!")){
-            webdriver.quit();
-            displayBadAddress();
-            return;
-        }
         if (webdriver.findElements(By.id("no-match-trillium-form")).size() > 0){
             webdriver.quit();
             displayBadAddress();
             return;
         }
-        this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("M", "");
-        System.out.println(maxSpeed + ": " + submitAddress);
-        webdriver.quit();
-        writeToDB(maxSpeed);
+        if (webdriver.findElements(By.id("maxSpeed")).size() > 0){
+            this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("M", "");
+            System.out.println(maxSpeed + ": " + submitAddress);
+            webdriver.quit();
+            writeToDB(maxSpeed);
+            return;
+        }
+        else {
+            webdriver.quit();
+            displayBadAddress();
+            return;
+        }
 
     }
     private void writeToDB(String speed){
