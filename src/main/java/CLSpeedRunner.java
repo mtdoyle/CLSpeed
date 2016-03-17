@@ -7,6 +7,7 @@ import java.util.concurrent.*;
  *
  */
 public class CLSpeedRunner {
+    static Integer THREADS = 15;
 
     private static Connection getConnectionFactory() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
@@ -21,7 +22,7 @@ public class CLSpeedRunner {
     public static void main(String[] args) throws IOException, TimeoutException, ExecutionException, InterruptedException {
         int messageCount;
 
-        ExecutorService executor = Executors.newFixedThreadPool(15);
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 
         Connection conn = getConnectionFactory();
 
@@ -34,7 +35,7 @@ public class CLSpeedRunner {
         channel.close();
 
         for (int i = 0; i < messageCount; i++) {
-            executor.submit(new CLSpeed());
+            executor.submit(new CLSpeed(conn));
         }
     }
 

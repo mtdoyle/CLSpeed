@@ -14,13 +14,23 @@ import java.util.concurrent.TimeoutException;
 public class CLSpeed implements Runnable {
     String maxSpeed;
     String address;
+    Connection conn;
     Channel channel;
     long deliveryTag;
     String actualAddress;
 
-    public CLSpeed() throws IOException, TimeoutException {
-        Connection conn = getConnectionFactory();
+    public CLSpeed(Connection conn) throws IOException {
+        this.conn = conn;
+        setUpConnection();
+    }
 
+    public CLSpeed() throws IOException, TimeoutException {
+        this.conn = getConnectionFactory();
+
+        setUpConnection();
+    }
+
+    private void setUpConnection() throws IOException {
         channel = conn.createChannel();
 
         channel.basicQos(1);
