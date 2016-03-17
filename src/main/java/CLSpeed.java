@@ -16,6 +16,7 @@ public class CLSpeed implements Runnable {
     String address;
     Channel channel;
     long deliveryTag;
+    String actualAddress;
 
     public CLSpeed() throws IOException, TimeoutException {
         Connection conn = getConnectionFactory();
@@ -71,6 +72,7 @@ public class CLSpeed implements Runnable {
             elapsedTime = (System.currentTimeMillis() - startTime)/1000;
         }
         if (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() > 0){
+            actualAddress = webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).getAttribute("innerHTML").replace("<b>","").replace("</b>","");
             webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).click();
         }
         if (webdriver.findElements(By.id("ctam_nc-go")).size() > 0){
@@ -109,7 +111,7 @@ public class CLSpeed implements Runnable {
 
     }
     private void writeToDB(){
-        new WriteToMySQL(address, maxSpeed);
+        new WriteToMySQL(address, actualAddress, maxSpeed);
     }
 
     private void displayBadAddress(){

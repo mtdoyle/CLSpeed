@@ -24,11 +24,12 @@ public class WriteToMySQL {
         executeStatement(sql);
     }
 
-    public WriteToMySQL(String address, String speed){
+    public WriteToMySQL(String address, String actualAddress, String speed){
         String[] addressSplit = address.split(",");
-        street = addressSplit[0];
-        city = addressSplit[1];
-        zip = addressSplit[2];
+        String[] actualAddressSplit = actualAddress.split(",");
+        street = actualAddressSplit[0];
+        city = actualAddressSplit[1];
+        zip = actualAddressSplit[2].split(" ")[1];
         lat = addressSplit[3];
         lon = addressSplit[4];
         garbage = addressSplit[5];
