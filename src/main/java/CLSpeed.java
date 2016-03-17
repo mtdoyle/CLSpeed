@@ -49,7 +49,7 @@ public class CLSpeed implements Runnable {
         factory.setUsername("guest");
         factory.setPassword("guest");
         factory.setVirtualHost("/");
-        factory.setHost("localhost");
+        factory.setHost("192.168.1.211");
         factory.setPort(5672);
         return factory.newConnection();
     }
@@ -86,8 +86,13 @@ public class CLSpeed implements Runnable {
             webdriver.quit();
             return;
         }
-        maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("\\D", "");
+        this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("\\D", "");
         System.out.println(maxSpeed + ": " + submitAddress);
         webdriver.quit();
+        writeToDB();
+
+    }
+    private void writeToDB(){
+        WriteToMySQL db = new WriteToMySQL(address, maxSpeed);
     }
 }

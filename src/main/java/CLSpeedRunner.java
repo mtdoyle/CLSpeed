@@ -13,7 +13,7 @@ public class CLSpeedRunner {
         factory.setUsername("guest");
         factory.setPassword("guest");
         factory.setVirtualHost("/");
-        factory.setHost("localhost");
+        factory.setHost("192.168.1.211");
         factory.setPort(5672);
         return factory.newConnection();
     }
