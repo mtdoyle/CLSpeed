@@ -13,8 +13,8 @@ public class CreateMySQLTable {
         String charset = "CHARACTER SET utf8 COLLATE utf8_general_ci";
 
         String sql = String.format("create table if not exists clspeed_%1$s" +
-                "(street varchar(100) %2$s, city varchar(100) %2$s, state varchar(2) %2$s, zip int(5), speed int(4), " +
-                "emm_lat decimal(12,10), emm_lng decimal(12,10), emm_acc varchar(20) %2$s)",
+                "(street varchar(100) %2$s, city varchar(100) %2$s, state varchar(2) %2$s, zip int(5), "
+                + "speed decimal(5,1), emm_lat decimal(12,10), emm_lng decimal(12,10), emm_acc varchar(20) %2$s)",
                 currDate, charset);
 
         executeStatement(sql);
