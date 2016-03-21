@@ -9,7 +9,7 @@ import java.util.concurrent.*;
  *
  */
 public class CLSpeedRunner {
-    static Integer THREADS = 5;
+    static Integer THREADS = 10;
 
     private static Connection getConnectionFactory() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
