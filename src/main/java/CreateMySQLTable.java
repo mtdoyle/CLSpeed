@@ -13,11 +13,12 @@ public class CreateMySQLTable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
         Calendar cal = Calendar.getInstance();
         String currDate = dateFormat.format(cal.getTime());
+        String charset = "[CHARACTER SET utf8 COLLATE utf8_bin]";
 
-        String sql = String.format("create table if not exists clspeed_%s" +
-                "(street varchar(100), city varchar(100), state varchar(2), zip int(5), speed int(4), "
-                + "emm_lat decimal(12,10), emm_lng decimal(12,10), emm_acc varchar(20))"
-                ,(currDate));
+        String sql = String.format("create table if not exists clspeed_%1$s" +
+                "(street varchar(100) %2$s, city varchar(100) %2$s, state varchar(2) %2$s, zip int(5), speed int(4), " +
+                "emm_lat decimal(12,10), emm_lng decimal(12,10), emm_acc varchar(20) %2$s)"
+                , currDate, charset);
 
         executeStatement(sql);
     }
