@@ -81,6 +81,7 @@ public class CLSpeed implements Runnable {
         String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
         FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
         WebDriver webdriver = new FirefoxDriver(profile);
+        //WebDriver webdriver = new FirefoxDriver();
         webdriver.get("http://www.centurylink.com/home/internet");
         webdriver.findElement(By.id("home-internet-speed-check")).click();
         webdriver.findElement(By.id("ctam_new-customer-link")).click();
@@ -92,12 +93,9 @@ public class CLSpeed implements Runnable {
         }
         if (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() > 0){
             actualAddress = webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).getAttribute("innerHTML").replace("<b>","").replace("</b>","");
-            webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).click();
-        }
-        if (webdriver.getPageSource().contains("Sorry")){
-            webdriver.quit();
-            displayBadAddress();
-            return;
+            webdriver.findElement(By.id("ctam_nc-sfaddress")).clear();
+            webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(actualAddress);
+            webdriver.findElement(By.id("ctam_nc-go")).click();
         }
         startTime = System.currentTimeMillis();
         elapsedTime = 0;
