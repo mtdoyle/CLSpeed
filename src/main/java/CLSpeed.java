@@ -96,13 +96,10 @@ public class CLSpeed implements Runnable {
             webdriver.findElement(By.xpath("//div[@id='ctam_modal']/div[1]")).click();
             webdriver.findElement(By.id("ctam_nc-go")).click();
         }
-        startTime = System.currentTimeMillis();
-        elapsedTime = 0;
-        while (webdriver.findElements(By.id("ctam_nc-go")).size() < 1 && elapsedTime < 5){
-            elapsedTime = (System.currentTimeMillis() - startTime)/1000;
-        }
-        if (webdriver.findElement(By.id("ctam_nc-go")).isDisplayed()){
-                webdriver.findElement(By.id("ctam_nc-go")).click();
+        if (webdriver.getPageSource().contains("sorry_page - We're working hard to get you to the right place")){
+            webdriver.quit();
+            displayBadAddress();
+            return;
         }
         if (webdriver.findElements(By.id("addressid2")).size() > 0){
             webdriver.findElements(By.id("addressid2")).get(0).click();
