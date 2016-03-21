@@ -1,6 +1,8 @@
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.*;
 
 /**
@@ -20,6 +22,14 @@ public class CLSpeedRunner {
     }
 
     public static void main(String[] args) throws IOException, TimeoutException, ExecutionException, InterruptedException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
+        Calendar cal = Calendar.getInstance();
+        String currDate = dateFormat.format(cal.getTime());
+
+        CreateMySQLTable createMySQLTable = new CreateMySQLTable();
+
+        createMySQLTable.createNewTable(currDate);
+
         int messageCount;
 
         ExecutorService executor = Executors.newFixedThreadPool(THREADS);
@@ -35,7 +45,7 @@ public class CLSpeedRunner {
         channel.close();
 
         for (int i = 0; i < messageCount; i++) {
-            executor.submit(new CLSpeed(conn));
+            executor.submit(new CLSpeed(conn, currDate));
         }
     }
 

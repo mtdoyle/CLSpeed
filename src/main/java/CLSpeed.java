@@ -16,9 +16,11 @@ public class CLSpeed implements Runnable {
     Channel channel;
     long deliveryTag;
     String actualAddress;
+    String currDate;
 
-    public CLSpeed(Connection conn) throws IOException {
+    public CLSpeed(Connection conn, String currDate) throws IOException {
         this.conn = conn;
+        this.currDate = currDate;
     }
 
     public CLSpeed() throws IOException, TimeoutException {
@@ -125,7 +127,7 @@ public class CLSpeed implements Runnable {
             this.maxSpeed = webdriver.findElement(By.id("maxSpeed")).getAttribute("value").split(":")[0].replaceAll("M", "");
             System.out.println(maxSpeed + ": " + submitAddress);
             webdriver.quit();
-            writeToDB(maxSpeed);
+            writeToDB(maxSpeed, currDate);
             return;
         }
         else {
@@ -135,7 +137,7 @@ public class CLSpeed implements Runnable {
         }
 
     }
-    private void writeToDB(String speed){
+    private void writeToDB(String speed, String currDate){
         String[] addressSplit = address.split(",");
         String[] actualAddressSplit = actualAddress.split(",");
         String street = actualAddressSplit[0];
@@ -146,10 +148,10 @@ public class CLSpeed implements Runnable {
         String garbage = addressSplit[5];
         String state = "MN";
 
-        String sql = String.format("insert into clspeed " +
+        String sql = String.format("insert into clspeed_%s " +
                         "(street, city, state, zip, speed, emm_lat, emm_lng, emm_acc)" +
                         "values ('%s', '%s', '%s', '%s', %s, %s, %s, '%s')",
-                street, city, state, zip, speed, lat, lon, garbage);
+                currDate, street, city, state, zip, speed, lat, lon, garbage);
         WriteToMySQL writeToMySQL = new WriteToMySQL();
         writeToMySQL.executeStatement(sql);
     }
