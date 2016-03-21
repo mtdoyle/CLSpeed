@@ -13,7 +13,7 @@ public class CreateMySQLTable {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
         Calendar cal = Calendar.getInstance();
         String currDate = dateFormat.format(cal.getTime());
-        String charset = "[CHARACTER SET utf8 COLLATE utf8_bin]";
+        String charset = "CHARACTER SET utf8 COLLATE utf8_bin";
 
         String sql = String.format("create table if not exists clspeed_%1$s" +
                 "(street varchar(100) %2$s, city varchar(100) %2$s, state varchar(2) %2$s, zip int(5), speed int(4), " +
