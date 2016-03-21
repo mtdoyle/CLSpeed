@@ -51,7 +51,6 @@ public class CLSpeed implements Runnable {
         try {
             setUpConnection();
         } catch (IOException e) {
-            System.out.println("ERROR ERROR");
             e.printStackTrace();
         }
         checkAddress();
@@ -59,7 +58,6 @@ public class CLSpeed implements Runnable {
             channel.basicAck(deliveryTag, false);
             channel.close();
         } catch (IOException e) {
-            System.out.println("ERROR ERROR ERROR");
             e.printStackTrace();
         } catch (TimeoutException e) {
             e.printStackTrace();
@@ -79,7 +77,7 @@ public class CLSpeed implements Runnable {
     public void checkAddress () {
         String[] choppedAddress = address.split(",");
         String submitAddress = choppedAddress[0] + ", " + choppedAddress[1] + ", MN " + choppedAddress[2];
-        FirefoxProfile profile = new FirefoxProfile(new File("/home/clspeed/.mozilla/firefox/pz9y9wa8.clspeed"));
+        FirefoxProfile profile = new FirefoxProfile(new File("C:\\Users\\mike\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\m2r963r2.clspeed"));
         WebDriver webdriver = new FirefoxDriver(profile);
         //WebDriver webdriver = new FirefoxDriver();
         webdriver.get("http://www.centurylink.com/home/internet");
@@ -94,7 +92,9 @@ public class CLSpeed implements Runnable {
         if (webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).size() > 0){
             actualAddress = webdriver.findElements(By.xpath("/html/body/ul/li[1]/a")).get(0).getAttribute("innerHTML").replace("<b>","").replace("</b>","");
             webdriver.findElement(By.id("ctam_nc-sfaddress")).clear();
+            webdriver.findElement(By.xpath("//div[@id='ctam_modal']/div[1]")).click();
             webdriver.findElement(By.id("ctam_nc-sfaddress")).sendKeys(actualAddress);
+            webdriver.findElement(By.xpath("//div[@id='ctam_modal']/div[1]")).click();
             webdriver.findElement(By.id("ctam_nc-go")).click();
         }
         startTime = System.currentTimeMillis();
@@ -129,12 +129,10 @@ public class CLSpeed implements Runnable {
             System.out.println(maxSpeed + ": " + submitAddress);
             webdriver.quit();
             writeToDB(maxSpeed, currDate);
-            return;
         }
         else {
             webdriver.quit();
             displayBadAddress();
-            return;
         }
 
     }
